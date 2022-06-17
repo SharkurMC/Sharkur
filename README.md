@@ -1,6 +1,6 @@
-[Purpur]: https://purpurmc.org
+<div align="center">
+    <img src="https://avatars.githubusercontent.com/u/107707992?s=200&v=4" alt="Sharkur" />
+</div>
 
-## Tentacles
-Template to create a mantainable fork of [Purpur].
-
-This readme will eventually contain instructions regarding the patch system. For now, visit Purpur's [CONTRIBUTING.md](https://github.com/PurpurMC/Purpur/blob/HEAD/CONTRIBUTING.md).
+## Sharkur
+Sharkur is a fork of [Purpur](https://github.com/PurpurMC/Purpur) which adds more configuration and also some optimization.
