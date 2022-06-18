@@ -52,6 +52,6 @@ run/
 
 build-data/
 Sharkur-API
-Tentacles-MojangAPI
+Sharkur-MojangAPI
 Sharkur-Server
 *.jar
