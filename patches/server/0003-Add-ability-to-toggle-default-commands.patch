@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sat, 18 Jun 2022 14:29:40 +0200
+Subject: [PATCH] Add ability to toggle default commands
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index c5a30d535a7ea52d5395d07e7897455b276e886c..3c6ec3e92a15a62a9582eafa43906263720ff43c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2853,6 +2853,23 @@ public final class CraftServer implements Server {
+         return io.papermc.paper.configuration.GlobalConfiguration.get().messages.noPermission;
+     }
+ 
++    // Sharkur start - Add ability to toggle default commands
++    @Override
++    public boolean isVersionCommandEnabled() {
++        return org.sharkurmc.sharkur.SharkurConfig.enableVersionCommand;
++    }
++
++    @Override
++    public boolean isPluginsCommandEnabled() {
++        return org.sharkurmc.sharkur.SharkurConfig.enablePluginsCommand;
++    }
++
++    @Override
++    public boolean isReloadCommandEnabled() {
++        return org.sharkurmc.sharkur.SharkurConfig.enableReloadCommand;
++    }
++    // Sharkur end
++
+     @Override
+     public com.destroystokyo.paper.profile.PlayerProfile createProfile(@Nonnull UUID uuid) {
+         return createProfile(uuid, null);
+diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+index c01730304d5b1bf32bc73b36aaf982480e3106c0..700590ff1e8dc5ed2e69eb37f94bfdce1bfa2d5a 100644
+--- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
++++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+@@ -154,4 +154,13 @@ public class SharkurConfig {
+     private static void messages() {
+         sharkurCommandsPrefix = getString("settings.messages.sharkur-commands-prefix", sharkurCommandsPrefix);
+     }
++
++    public static boolean enableVersionCommand = true;
++    public static boolean enablePluginsCommand = true;
++    public static boolean enableReloadCommand = true;
++    private static void commands() {
++        enableVersionCommand = getBoolean("settings.commands.version", enableVersionCommand);
++        enablePluginsCommand = getBoolean("settings.commands.plugins", enablePluginsCommand);
++        enableReloadCommand = getBoolean("settings.commands.reload", enableReloadCommand);
++    }
+ }
