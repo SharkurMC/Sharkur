@@ -4,12 +4,85 @@ Date: Sat, 18 Jun 2022 12:21:50 +0200
 Subject: [PATCH] Sharkur config files
 
 
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 4487138c167b7861406a626ad99b64486eae5aea..5c045efaab0c1f06bba31c377389bffa68ac8cc9 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -235,6 +235,15 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // load version history now
+         io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
+         // Paper end
++        // Sharkur start - load sharkur configuration
++        try {
++            org.sharkurmc.sharkur.SharkurConfig.init((java.io.File) options.valueOf("sharkur-settings"));
++        } catch (Exception e) {
++            DedicatedServer.LOGGER.error("Unable to load server configuration", e);
++            return false;
++        }
++        org.sharkurmc.sharkur.SharkurConfig.registerCommands();
++        // Sharkur end
+         gg.pufferfish.pufferfish.PufferfishConfig.load(); // Pufferfish
+         gg.pufferfish.pufferfish.PufferfishCommand.init(); // Pufferfish
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 4cbd7549f414d45f01713d4607f02d3ec397a5b3..c5a30d535a7ea52d5395d07e7897455b276e886c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -951,6 +951,7 @@ public final class CraftServer implements Server {
+         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
+         this.console.paperConfigurations.reloadConfigs(this.console);
+         org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur
++        org.sharkurmc.sharkur.SharkurConfig.init((File) console.options.valueOf("sharkur-settings")); // Sharkur
+         for (ServerLevel world : this.console.getAllLevels()) {
+             // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
+             world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
+@@ -983,6 +984,7 @@ public final class CraftServer implements Server {
+         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
+         io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
+         org.purpurmc.purpur.PurpurConfig.registerCommands(); // Purpur
++        org.sharkurmc.sharkur.SharkurConfig.registerCommands(); // Sharkur
+         this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
+         this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
+ 
+@@ -2728,6 +2730,13 @@ public final class CraftServer implements Server {
+         }
+         // Purpur end
+ 
++        // Sharkur start
++        @Override
++        public YamlConfiguration getSharkurConfig() {
++            return org.sharkurmc.sharkur.SharkurConfig.config;
++        }
++        // Sharkur end
++
+         @Override
+         public void restart() {
+             org.spigotmc.RestartCommand.restart();
+diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
+index 1f3c4adf3aeb28bcb91cb6913459ea2923ad95a4..be6795aec3c29847b683642f9b9eebd572369164 100644
+--- a/src/main/java/org/bukkit/craftbukkit/Main.java
++++ b/src/main/java/org/bukkit/craftbukkit/Main.java
+@@ -173,6 +173,14 @@ public class Main {
+                         .defaultsTo("Unknown Server")
+                         .describedAs("Name");
+                 // Paper end
++
++                // Sharkur Start
++                acceptsAll(asList("sharkur", "sharkur-settings"), "File for sharkur settings")
++                        .withRequiredArg()
++                        .ofType(File.class)
++                        .defaultsTo(new File("sharkur.yml"))
++                        .describedAs("Yml file");
++                // Sharkur end
+             }
+         };
+ 
 diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c428502ceaeeef6fe14ecac69684bdc98b92a068
+index 0000000000000000000000000000000000000000..c01730304d5b1bf32bc73b36aaf982480e3106c0
 --- /dev/null
 +++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
-@@ -0,0 +1,150 @@
+@@ -0,0 +1,157 @@
 +package org.sharkurmc.sharkur;
 +
 +import com.google.common.base.Throwables;
@@ -20,6 +93,7 @@ index 0000000000000000000000000000000000000000..c428502ceaeeef6fe14ecac69684bdc9
 +import org.bukkit.configuration.ConfigurationSection;
 +import org.bukkit.configuration.InvalidConfigurationException;
 +import org.bukkit.configuration.file.YamlConfiguration;
++import org.sharkurmc.sharkur.command.SharkurCommand;
 +
 +import java.io.File;
 +import java.io.IOException;
@@ -63,6 +137,7 @@ index 0000000000000000000000000000000000000000..c428502ceaeeef6fe14ecac69684bdc9
 +        verbose = getBoolean("verbose", false);
 +
 +        commands = new HashMap<>();
++        commands.put("sharkur", new SharkurCommand("sharkur"));
 +
 +        version = getInt("config-version", 1);
 +        set("config-version", 1);
@@ -158,5 +233,89 @@ index 0000000000000000000000000000000000000000..c428502ceaeeef6fe14ecac69684bdc9
 +            }
 +        }
 +        return builder.build();
++    }
++
++    public static String sharkurCommandsPrefix = "<gradient:#1db0f3:#64cdfd>(Sharkur)</gradient:#1db0f3:#64cdfd>";
++    private static void messages() {
++        sharkurCommandsPrefix = getString("settings.messages.sharkur-commands-prefix", sharkurCommandsPrefix);
++    }
++}
+diff --git a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..ffb145ae3e6a526e9de349a1f55f5cf1ca5b7dfd
+--- /dev/null
++++ b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
+@@ -0,0 +1,73 @@
++package org.sharkurmc.sharkur.command;
++
++import net.kyori.adventure.text.minimessage.MiniMessage;
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.Location;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++import org.sharkurmc.sharkur.SharkurConfig;
++
++import java.io.File;
++import java.util.Collections;
++import java.util.List;
++import java.util.stream.Collectors;
++import java.util.stream.Stream;
++
++public class SharkurCommand extends Command {
++    public SharkurCommand(String name) {
++        super(name);
++        this.description = "Sharkur related commands";
++        this.usageMessage = "/sharkur [reload | version]";
++        this.setPermission("bukkit.command.sharkur");
++    }
++
++    @Override
++    public List<String> tabComplete(CommandSender sender, String alias, String[] args, Location location) throws IllegalArgumentException {
++        if (args.length == 1) {
++            return Stream.of("reload", "version")
++                    .filter(arg -> arg.startsWith(args[0].toLowerCase()))
++                    .collect(Collectors.toList());
++        }
++        return Collections.emptyList();
++    }
++
++    @Override
++    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
++        if (!testPermission(sender)) return true;
++
++        if (args.length != 1) {
++            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Usage: " + usageMessage);
++            return false;
++        }
++
++        if (args[0].equalsIgnoreCase("reload")) {
++            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + "Please note that this command is not supported and may cause issues.", true);
++            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + "If you encounter any issues please use the /stop command to restart your server.", true);
++
++            MinecraftServer console = MinecraftServer.getServer();
++            SharkurConfig.init((File) console.options.valueOf("sharkur-settings"));
++            console.server.reloadCount++;
++
++            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + "Sharkur config reload complete.", true);
++        } else if (args[0].equalsIgnoreCase("version")) {
++            Command verCmd = org.bukkit.Bukkit.getServer().getCommandMap().getCommand("version");
++            if (verCmd != null) {
++                return verCmd.execute(sender, commandLabel, new String[0]);
++            }
++        }
++
++        return true;
++    }
++
++    private void sendMessage(CommandSender sender, String message, boolean broadcast) {
++        if (broadcast) {
++            Command.broadcastCommandMessage(sender, MiniMessage.miniMessage().deserialize(message));
++        } else {
++            sender.sendMessage(MiniMessage.miniMessage().deserialize(message));
++        }
++    }
++
++    private void sendMessage(CommandSender sender, String message) {
++        sendMessage(sender, message, false);
 +    }
 +}
