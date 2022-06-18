@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: William Blake Galbreath <blake.galbreath@gmail.com>
+Date: Sat, 26 Jun 2021 22:08:57 -0500
+Subject: [PATCH] Add back player spawned endermite API
+
+
+diff --git a/src/main/java/org/bukkit/entity/Endermite.java b/src/main/java/org/bukkit/entity/Endermite.java
+index 9e7f42caab1204036f4203354c115fd40c6def92..1bc6a6930e9a5881a4fe4bf208da4430d90d799a 100644
+--- a/src/main/java/org/bukkit/entity/Endermite.java
++++ b/src/main/java/org/bukkit/entity/Endermite.java
+@@ -3,24 +3,20 @@ package org.bukkit.entity;
+ public interface Endermite extends Monster {
+ 
+     /**
+-     * Gets whether this Endermite was spawned by a player.
++     * Gets whether this Endermite was spawned by a player from throwing an ender pearl
+      *
+-     * An Endermite spawned by a player will be attacked by nearby Enderman.
++     * An Endermite spawned by a player might be attacked by nearby Enderman depending on purpur.yml settings
+      *
+      * @return player spawned status
+-     * @deprecated this functionality no longer exists
+      */
+-    @Deprecated
+     boolean isPlayerSpawned();
+ 
+     /**
+-     * Sets whether this Endermite was spawned by a player.
++     * Sets whether this Endermite was spawned by a player from throwing an ender pearl
+      *
+-     * An Endermite spawned by a player will be attacked by nearby Enderman.
++     * An Endermite spawned by a player might be attacked by nearby Enderman depending on purpur.yml settings
+      *
+      * @param playerSpawned player spawned status
+-     * @deprecated this functionality no longer exists
+      */
+-    @Deprecated
+     void setPlayerSpawned(boolean playerSpawned);
+ }

@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: William Blake Galbreath <blake.galbreath@gmail.com>
+Date: Tue, 23 Jul 2019 10:07:24 -0500
+Subject: [PATCH] Lagging threshold
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 4e4d4931ec8d097f8b6162d56c9ec2eed8a982b4..d9fca5c2d50b3d15c4719ebf5f92a56b00b28033 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -2391,5 +2391,14 @@ public final class Bukkit {
+     public static String getServerName() {
+         return server.getServerName();
+     }
++
++    /**
++     * Check if server is lagging according to laggy threshold setting
++     *
++     * @return True if lagging
++     */
++    public static boolean isLagging() {
++        return server.isLagging();
++    }
+     // Purpur end
+ }
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index ca6ea0b03fb06f91712c68f7c84d8025908d65bf..4909c0ebf7d15d950eb18a5793590fac545a95bb 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -2085,5 +2085,12 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+      */
+     @NotNull
+     String getServerName();
++
++    /**
++     * Check if server is lagging according to laggy threshold setting
++     *
++     * @return True if lagging
++     */
++    boolean isLagging();
+     // Purpur end
+ }
