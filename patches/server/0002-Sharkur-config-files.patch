@@ -242,14 +242,15 @@ index 0000000000000000000000000000000000000000..c01730304d5b1bf32bc73b36aaf98248
 +}
 diff --git a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ffb145ae3e6a526e9de349a1f55f5cf1ca5b7dfd
+index 0000000000000000000000000000000000000000..cbafdf8123ab039bf6c29d78e313a0bac76f296e
 --- /dev/null
 +++ b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
-@@ -0,0 +1,73 @@
+@@ -0,0 +1,74 @@
 +package org.sharkurmc.sharkur.command;
 +
 +import net.kyori.adventure.text.minimessage.MiniMessage;
 +import net.minecraft.server.MinecraftServer;
++import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.command.Command;
 +import org.bukkit.command.CommandSender;
@@ -298,10 +299,10 @@ index 0000000000000000000000000000000000000000..ffb145ae3e6a526e9de349a1f55f5cf1
 +
 +            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + "Sharkur config reload complete.", true);
 +        } else if (args[0].equalsIgnoreCase("version")) {
-+            Command verCmd = org.bukkit.Bukkit.getServer().getCommandMap().getCommand("version");
-+            if (verCmd != null) {
-+                return verCmd.execute(sender, commandLabel, new String[0]);
-+            }
++            String version = Bukkit.getVersion();
++
++            if (version.startsWith("null")) version = "unknown, running from ide?";
++            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Version: <#64cdfd>" + version);
 +        }
 +
 +        return true;
