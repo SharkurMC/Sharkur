@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 19 Jun 2022 08:00:59 +0200
+Subject: [PATCH] Add ability to disable usercache saving
+
+
+diff --git a/src/main/java/net/minecraft/server/players/GameProfileCache.java b/src/main/java/net/minecraft/server/players/GameProfileCache.java
+index 4dff88bdf14675718572e4b3720c0250ce6e730e..fb149bdb3342e677aba0368bd8902616acd7782b 100644
+--- a/src/main/java/net/minecraft/server/players/GameProfileCache.java
++++ b/src/main/java/net/minecraft/server/players/GameProfileCache.java
+@@ -305,6 +305,7 @@ public class GameProfileCache {
+     }
+ 
+     public void save(boolean asyncSave) { // Paper
++        if (org.sharkurmc.sharkur.SharkurConfig.disableUserCache) return; // Sharkur - Add ability to disable usercache saving
+         JsonArray jsonarray = new JsonArray();
+         DateFormat dateformat = GameProfileCache.createDateFormat();
+ 
+diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+index 40e9cbeca8f76e8d49ffab2c8894c21c59fcab0f..89fa483516e5643e80207cbd4e100deebbe59d16 100644
+--- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
++++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+@@ -167,4 +167,9 @@ public class SharkurConfig {
+ 
+         MinecraftServer.getServer().server.getCommandMap().setDefaultCommands();
+     }
++
++    public static boolean disableUserCache = false;
++    private static void disableUserCache() {
++        disableUserCache = getBoolean("settings.disable-user-cache", disableUserCache);
++    }
+ }
