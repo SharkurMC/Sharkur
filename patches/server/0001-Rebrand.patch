@@ -27,22 +27,19 @@ index 00d128eba3e778927bc33b71c1145051a0c142f5..4d05f15d92f1e6dcea7d6d152aada0b3
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index acd95cf1dc7f009b63e44e4404e1736283fd458e..4ca6c64d428e2094064bbed8f5637edc00c1977c 100644
+index acd95cf1dc7f009b63e44e4404e1736283fd458e..55c380f9a34e62df65c82e727b2824bbe3ea6215 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -592,8 +592,9 @@ public class Metrics {
-             String serverUUID = config.getString("serverUuid");
+@@ -593,7 +593,7 @@ public class Metrics {
              boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
              // Only start Metrics, if it's enabled in the config
--            if (config.getBoolean("enabled", true)) {
+             if (config.getBoolean("enabled", true)) {
 -                Metrics metrics = new Metrics("Purpur", serverUUID, logFailedRequests, Bukkit.getLogger()); // Purpur
-+            // Sharkur start - waiting for bstats
-+            /*if (config.getBoolean("enabled", true)) {
 +                Metrics metrics = new Metrics("Sharkur", serverUUID, logFailedRequests, Bukkit.getLogger()); // Purpur // Sharkur
  
                  metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                      String minecraftVersion = Bukkit.getVersion();
-@@ -603,7 +604,7 @@ public class Metrics {
+@@ -603,7 +603,7 @@ public class Metrics {
  
                  metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                  metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() ? "bungee" : "offline"))); // Purpur
@@ -51,16 +48,6 @@ index acd95cf1dc7f009b63e44e4404e1736283fd458e..4ca6c64d428e2094064bbed8f5637edc
  
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>();
-@@ -668,7 +669,8 @@ public class Metrics {
- 
-                     return map;
-                 }));
--            }
-+            }*/
-+            // Sharkur end
- 
-         }
-     }
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 index fba5dbdb7bcbb55400ef18342c9b54612972a718..ab41115eb9592b9e46483d1e23caeee13ed88695 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
