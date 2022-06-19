@@ -15,7 +15,6 @@ public final class TestPlugin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (event.getPlayer().getClientBrandName() != null) event.getPlayer().sendMessage("Ok wtf how? " + event.getPlayer().getClientBrandName());
         event.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<gold>hello</gold>"));
     }
 
