@@ -9,6 +9,11 @@ pipeline {
               sh 'chmod +x gradlew'
           }
       }
+      stage('Setup') {
+          steps {
+              sh './gradlew applyPatches'
+          }
+      }
       stage('Build') {
           steps {
               sh './gradlew createReobfPaperclipJar'
