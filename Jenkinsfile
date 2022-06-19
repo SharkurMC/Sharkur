@@ -1,13 +1,5 @@
 pipeline {
-  agent {
-      kubernetes {
-          containerTemplate {
-              name 'sharkur-build'
-              image 'openjdk:17-jdk-slim'
-              ttyEnabled true
-          }
-      }
-  }
+  agent any
   stages {
     stage('Pre Build') {
       steps {
