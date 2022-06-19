@@ -13,6 +13,12 @@ public final class TestPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
     }
 
+    @Override
+    public void onReload() {
+        getLogger().info("reloading plugin");
+        getServer().broadcast(MiniMessage.miniMessage().deserialize("<gold>"+getName()+" reloaded :)</gold>"));
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<gold>hello</gold>"));
