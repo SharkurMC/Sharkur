@@ -38,3 +38,21 @@ index 3bea5dd67ad0393160ccede4ac99a3c7baa1803b..7290ce1d6ba1cdb26c8f11301441136b
      @Nullable
      @Override
      public ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
+diff --git a/src/test/java/org/bukkit/plugin/TestPlugin.java b/src/test/java/org/bukkit/plugin/TestPlugin.java
+index a8be3e23e3e280ad301d9530de50028515612966..f1417eb20756eb99add88c467738711322e86ff8 100644
+--- a/src/test/java/org/bukkit/plugin/TestPlugin.java
++++ b/src/test/java/org/bukkit/plugin/TestPlugin.java
+@@ -98,6 +98,13 @@ public class TestPlugin extends PluginBase {
+         throw new UnsupportedOperationException("Not supported.");
+     }
+ 
++    // Sharkur start - Add onReload function to Plugin for safe reload
++    @Override
++    public void onReload() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++    // Sharkur end
++
+     @Override
+     public boolean isNaggable() {
+         throw new UnsupportedOperationException("Not supported.");
