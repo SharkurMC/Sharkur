@@ -1,13 +1,5 @@
 pipeline {
   agent any
-  tools {
-      jdk 'jdk-17'
-  }
-
-  environment {
-      JAVA17_HOME = "${tool 'jdk-17'}"
-      JAVA_HOME = "${tool 'jdk-17'}"
-  }
   stages {
       stage('Pre-Build') {
           steps {
