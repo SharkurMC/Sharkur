@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 19 Jun 2022 08:43:24 +0200
+Subject: [PATCH] Add PlayerClientBrand event
+
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 99c8b4957194868c36f9ea214c7f77a23ce8002a..0ad981a11a3bf95b2edb687344079492ca9956e3 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -3519,6 +3519,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
+                     } catch (StringIndexOutOfBoundsException ex) {
+                         this.clientBrandName = "illegal";
+                     }
++                    this.cserver.getPluginManager().callEvent(new org.sharkurmc.sharkur.event.PlayerClientBrandEvent(player.getBukkitEntity(), clientBrandName)); // Sharkur - Add PlayerClientBrand event
+                 }
+                 // Paper end
+                 this.cserver.getMessenger().dispatchIncomingMessage(this.player.getBukkitEntity(), packet.identifier.toString(), data);
