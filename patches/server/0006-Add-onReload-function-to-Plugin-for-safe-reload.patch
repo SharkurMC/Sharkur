@@ -1,0 +1,98 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 19 Jun 2022 11:44:32 +0200
+Subject: [PATCH] Add onReload function to Plugin for safe reload
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/MinecraftInternalPlugin.java b/src/main/java/org/bukkit/craftbukkit/scheduler/MinecraftInternalPlugin.java
+index 0d9e2b3728f9ab500bd5e44702718535d338e9a5..d7004b6f63b3127faae3ff7ed108a885e38dc6f7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scheduler/MinecraftInternalPlugin.java
++++ b/src/main/java/org/bukkit/craftbukkit/scheduler/MinecraftInternalPlugin.java
+@@ -114,6 +114,13 @@ public class MinecraftInternalPlugin extends PluginBase {
+         throw new UnsupportedOperationException("Not supported.");
+     }
+ 
++    // Sharkur start - Add onReload function to Plugin for safe reload
++    @Override
++    public void onReload() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++    // Sharkur end
++
+     @Override
+     public boolean isNaggable() {
+         throw new UnsupportedOperationException("Not supported.");
+diff --git a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
+index cbafdf8123ab039bf6c29d78e313a0bac76f296e..1a8ef9fae651238ee677d6328cb61d79509b008d 100644
+--- a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
++++ b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
+@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
+ import org.bukkit.Location;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
++import org.bukkit.plugin.Plugin;
+ import org.sharkurmc.sharkur.SharkurConfig;
+ 
+ import java.io.File;
+@@ -18,7 +19,7 @@ public class SharkurCommand extends Command {
+     public SharkurCommand(String name) {
+         super(name);
+         this.description = "Sharkur related commands";
+-        this.usageMessage = "/sharkur [reload | version]";
++        this.usageMessage = "/sharkur [reload [plugins | config] | version]";
+         this.setPermission("bukkit.command.sharkur");
+     }
+ 
+@@ -28,6 +29,10 @@ public class SharkurCommand extends Command {
+             return Stream.of("reload", "version")
+                     .filter(arg -> arg.startsWith(args[0].toLowerCase()))
+                     .collect(Collectors.toList());
++        } else if (args.length == 2) {
++            if (args[0].equalsIgnoreCase("reload")) {
++                return List.of("plugins", "config");
++            }
+         }
+         return Collections.emptyList();
+     }
+@@ -36,20 +41,34 @@ public class SharkurCommand extends Command {
+     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+         if (!testPermission(sender)) return true;
+ 
+-        if (args.length != 1) {
++        if (args.length == 0) {
+             sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Usage: " + usageMessage);
+             return false;
+         }
+ 
+         if (args[0].equalsIgnoreCase("reload")) {
+-            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + "Please note that this command is not supported and may cause issues.", true);
+-            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + "If you encounter any issues please use the /stop command to restart your server.", true);
+-
+             MinecraftServer console = MinecraftServer.getServer();
+-            SharkurConfig.init((File) console.options.valueOf("sharkur-settings"));
+-            console.server.reloadCount++;
+ 
+-            sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + "Sharkur config reload complete.", true);
++            if (args[1].equalsIgnoreCase("config")) {
++                sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " <red>Please note that this command is not supported and may cause issues.</red>", true);
++                sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " <red>If you encounter any issues please use the /stop command to restart your server.</red>", true);
++
++                SharkurConfig.init((File) console.options.valueOf("sharkur-settings"));
++
++                sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " <green>Sharkur config reload complete.</green>", true);
++            } else {
++                int pluginsReloadedCount = 0;
++                for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
++                    plugin.onReload();
++
++                    MinecraftServer.LOGGER.info("[Sharkur] Plugin " + plugin.getName() + " has been reloaded");
++                    pluginsReloadedCount++;
++                }
++
++                sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " <green>"+pluginsReloadedCount+" plugins have been reloaded.</green>", true);
++            }
++
++            console.server.reloadCount++;
+         } else if (args[0].equalsIgnoreCase("version")) {
+             String version = Bukkit.getVersion();
+ 

@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 19 Jun 2022 11:44:40 +0200
+Subject: [PATCH] Add onReload function to Plugin for safe reload
+
+
+diff --git a/src/main/java/org/bukkit/plugin/Plugin.java b/src/main/java/org/bukkit/plugin/Plugin.java
+index 08aef59d8443038771704d9587e31f299e587307..691377357a2945f2eee7c7c2d5203d9e1847fa99 100644
+--- a/src/main/java/org/bukkit/plugin/Plugin.java
++++ b/src/main/java/org/bukkit/plugin/Plugin.java
+@@ -131,6 +131,13 @@ public interface Plugin extends TabExecutor {
+      */
+     public void onEnable();
+ 
++    // Sharkur start - Add onReload function to Plugin for safe reload
++    /**
++     * Called when /sharkur reload plugins is run.
++     */
++    public void onReload();
++    // Sharkur end
++
+     /**
+      * Simple boolean if we can still nag to the logs about things
+      *
+diff --git a/src/main/java/org/bukkit/plugin/java/JavaPlugin.java b/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
+index 3bea5dd67ad0393160ccede4ac99a3c7baa1803b..7290ce1d6ba1cdb26c8f11301441136ba35df311 100644
+--- a/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
++++ b/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
+@@ -334,6 +334,11 @@ public abstract class JavaPlugin extends PluginBase {
+     @Override
+     public void onEnable() {}
+ 
++    // Sharkur start - Add onReload function to Plugin for safe reload
++    @Override
++    public void onReload() {}
++    // Sharkur end
++
+     @Nullable
+     @Override
+     public ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
