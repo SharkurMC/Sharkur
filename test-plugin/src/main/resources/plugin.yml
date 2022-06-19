@@ -1,0 +1,7 @@
+name: Sharkur-Test-Plugin
+version: ${version}
+main: org.sharkurmc.sharkur.testplugin.TestPlugin
+description: Sharkur Test Plugin
+author: SharkurMC
+api-version: ${apiversion}
+load: STARTUP
