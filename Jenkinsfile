@@ -37,7 +37,7 @@ pipeline {
       archiveArtifacts(artifacts: 'build/libs/**/sharkur-paperclip-*.jar', fingerprint: true)
     }
     always {
-      discordSend(description: "Jenkins Pipeline Build", footer: "Footer Text", link: env.BUILD_URL, result: currentBuild.currentResult, title: "Sharkur", webhookURL: "$DISCORD_WEBHOOK")
+      discordSend(description: "**Build:** ${env.BUILD_ID}\n**Status:** ${currentBuild.currentResult}", link: env.BUILD_URL, result: currentBuild.currentResult, title: "Sharkur #${env.BUILD_ID}", webhookURL: "$DISCORD_WEBHOOK")
     }
   }
 }
