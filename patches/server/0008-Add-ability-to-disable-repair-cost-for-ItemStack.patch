@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Mon, 20 Jun 2022 22:26:47 +0200
+Subject: [PATCH] Add ability to disable repair cost for ItemStack
+
+
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index 308bf5525775ab097dddc164e8a08122d571dc1e..e2bc3d5bbb17a5a7b23efed48499992eef3f5e44 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -328,6 +328,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+                 EnchantmentHelper.setEnchantments(map, itemstack1);
+             }
+ 
++            if (org.sharkurmc.sharkur.SharkurConfig.disableItemStackRepairCost && this.cost.get() != DEFAULT_DENIED_COST) this.cost.set(0); // Shakur - Add ability to disable repair cost for ItemStack
+             org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), itemstack1); // CraftBukkit
+             sendAllDataToRemote(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
+             this.broadcastChanges();
+diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
+index 4ec80c52cbee9b484e47a93551df4dbf62f6d83e..bd140f865a978f53d80d6556cf2081f405a670cb 100644
+--- a/src/main/java/net/minecraft/world/item/ItemStack.java
++++ b/src/main/java/net/minecraft/world/item/ItemStack.java
+@@ -228,6 +228,7 @@ public final class ItemStack {
+         this.count = count;
+         if (this.item != null && this.item.canBeDepleted()) {
+             this.setDamageValue(this.getDamageValue());
++            if (this.tag != null && this.tag.contains("RepairCost")) this.tag.remove("RepairCost"); // Shakur - Add ability to disable repair cost for ItemStack
+         }
+ 
+         this.updateEmptyCacheFlag();
+@@ -1184,10 +1185,12 @@ public final class ItemStack {
+     }
+ 
+     public int getBaseRepairCost() {
++        if (org.sharkurmc.sharkur.SharkurConfig.disableItemStackRepairCost) return 0; // Shakur - Add ability to disable repair cost for ItemStack
+         return this.hasTag() && this.tag.contains("RepairCost", 3) ? this.tag.getInt("RepairCost") : 0;
+     }
+ 
+     public void setRepairCost(int repairCost) {
++        if (org.sharkurmc.sharkur.SharkurConfig.disableItemStackRepairCost) return; // Shakur - Add ability to disable repair cost for ItemStack
+         // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
+         if (repairCost == 0) {
+             this.removeTagKey("RepairCost");
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 3c4dadd0012c11191c873fe25a7625193563915d..b5587f52121660b60710cbafa3c499d69ef7d146 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -384,7 +384,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
+         this.enchantments = CraftMetaItem.buildEnchantments(tag, CraftMetaItem.ENCHANTMENTS);
+         this.attributeModifiers = CraftMetaItem.buildModifiers(tag, CraftMetaItem.ATTRIBUTES);
+ 
+-        if (tag.contains(REPAIR.NBT)) {
++        if (!org.sharkurmc.sharkur.SharkurConfig.disableItemStackRepairCost && tag.contains(REPAIR.NBT)) { // Shakur - Add ability to disable repair cost for ItemStack
+             this.repairCost = tag.getInt(REPAIR.NBT);
+         }
+ 
+diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+index 69bf97ef5e00ffa3cb2697ee820472f82217b432..f0c2ae60748cb366fe0d9329aea37cc9f34bcd70 100644
+--- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
++++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+@@ -179,4 +179,9 @@ public class SharkurConfig {
+     private static void disableUserCache() {
+         disableUserCache = getBoolean("settings.disable-user-cache", disableUserCache);
+     }
++
++    public static boolean disableItemStackRepairCost = false;
++    private static void itemStack() {
++        disableItemStackRepairCost = getBoolean("settings.item-stack.disable-repair-cost", disableItemStackRepairCost);
++    }
+ }
