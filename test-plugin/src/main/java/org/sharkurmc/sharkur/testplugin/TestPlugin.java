@@ -3,6 +3,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.sharkurmc.sharkur.event.PlayerClientBrandEvent;
 
@@ -22,10 +23,16 @@ public final class TestPlugin extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<gold>hello</gold>"));
+        // event.joinMessage(MiniMessage.miniMessage().deserialize(event.getPlayer().getName() + " joined"));
     }
 
     @EventHandler
     public void onBrand(PlayerClientBrandEvent event) {
         event.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<white>Your brand is: </white><gold>" + event.getBrandName() + "</gold>"));
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        event.quitMessage(MiniMessage.miniMessage().deserialize(event.getPlayer().getName() + " left"));
     }
 }

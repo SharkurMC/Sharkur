@@ -1,0 +1,73 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Mon, 20 Jun 2022 20:42:02 +0200
+Subject: [PATCH] Add ability to customizable join and leave messages
+
+
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index fecd65dc87a99a5692c59dd590b20327b1eb31c2..815f29045d3d555a7483d3794a2d1c00bc6b7163 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -332,15 +332,22 @@ public abstract class PlayerList {
+         }
+         player.didPlayerJoinEvent = true;
+         // Paper end
+-        MutableComponent ichatmutablecomponent;
+-
+-        if (player.getGameProfile().getName().equalsIgnoreCase(s)) {
++        Component ichatmutablecomponent; // Sharkur - Add ability to customizable join & leave messages (MutableComponent -> Component)
++
++        // Sharkur start - Add ability to customizable join & leave messages
++        ichatmutablecomponent = PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(
++                org.sharkurmc.sharkur.SharkurConfig.playerJoinMessage
++                        .replaceAll("\\{}", player.getDisplayName().getString())
++        ));
++        /*if (player.getGameProfile().getName().equalsIgnoreCase(s)) {
+             ichatmutablecomponent = Component.translatable("multiplayer.player.joined", player.getDisplayName());
+         } else {
+             ichatmutablecomponent = Component.translatable("multiplayer.player.joined.renamed", player.getDisplayName(), s);
+-        }
++        }*/
++        // Sharkur end
++
+         // CraftBukkit start
+-        ichatmutablecomponent.withStyle(ChatFormatting.YELLOW);
++        // ichatmutablecomponent.withStyle(ChatFormatting.YELLOW); // Sharkur - Add ability to customizable join & leave messages
+         Component joinMessage = ichatmutablecomponent; // Paper - Adventure
+ 
+         playerconnection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+@@ -619,6 +626,16 @@ public abstract class PlayerList {
+             entityplayer.closeContainer(org.bukkit.event.inventory.InventoryCloseEvent.Reason.DISCONNECT); // Paper
+         }
+ 
++        // Sharkur start - Add ability to customizable join & leave messages
++        leaveMessage = net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(
++                org.sharkurmc.sharkur.SharkurConfig.playerLeaveMessage
++                        .replaceAll("\\{}", io.papermc.paper.configuration.GlobalConfiguration.get().messages.useDisplayNameInQuitMessage ?
++                                entityplayer.getBukkitEntity().getDisplayName() :
++                                entityplayer.getScoreboardName()
++                        )
++        );
++        // Sharkur end
++
+         PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(entityplayer.getBukkitEntity(), leaveMessage, entityplayer.quitReason); // Paper - quit reason
+         if (entityplayer.didPlayerJoinEvent) this.cserver.getPluginManager().callEvent(playerQuitEvent); // Paper - if we disconnected before join ever fired, don't fire quit
+         entityplayer.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
+diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+index 89fa483516e5643e80207cbd4e100deebbe59d16..8de35fca32b3764a68896aaf0fcefda7c4f663ab 100644
+--- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
++++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+@@ -155,6 +155,13 @@ public class SharkurConfig {
+         sharkurCommandsPrefix = getString("settings.messages.sharkur-commands-prefix", sharkurCommandsPrefix);
+     }
+ 
++    public static String playerJoinMessage = "<yellow>{} joined the game.";
++    public static String playerLeaveMessage = "<yellow>{} left the game.";
++    private static void playerMessages() {
++        playerJoinMessage = getString("settings.messages.player.join", playerJoinMessage);
++        playerLeaveMessage = getString("settings.messages.player.left", playerLeaveMessage);
++    }
++
+     public static boolean enableVersionCommand = true;
+     public static boolean enablePluginsCommand = true;
+     public static boolean enableReloadCommand = true;
