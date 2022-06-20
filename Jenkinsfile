@@ -1,5 +1,8 @@
 pipeline {
   agent any
+    environment {
+      DISCORD_WEBHOOK = credentials('jenkins-discord-webhook')
+  }
   stages {
     stage('Pre-Build') {
       steps {
@@ -33,6 +36,8 @@ pipeline {
     success {
       archiveArtifacts(artifacts: 'build/libs/**/sharkur-paperclip-*.jar', fingerprint: true)
     }
-
+    always {
+      discordSend description: "Jenkins Pipeline Build", footer: "Footer Text", link: env.BUILD_URL, result: currentBuild.currentResult, title: "Sharkur", webhookURL: $DISCORD_WEBHOOK
+    }
   }
 }
