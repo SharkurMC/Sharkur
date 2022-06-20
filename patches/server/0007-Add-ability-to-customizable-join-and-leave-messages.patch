@@ -54,15 +54,15 @@ index fecd65dc87a99a5692c59dd590b20327b1eb31c2..815f29045d3d555a7483d3794a2d1c00
          if (entityplayer.didPlayerJoinEvent) this.cserver.getPluginManager().callEvent(playerQuitEvent); // Paper - if we disconnected before join ever fired, don't fire quit
          entityplayer.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
-index 89fa483516e5643e80207cbd4e100deebbe59d16..8de35fca32b3764a68896aaf0fcefda7c4f663ab 100644
+index 89fa483516e5643e80207cbd4e100deebbe59d16..69bf97ef5e00ffa3cb2697ee820472f82217b432 100644
 --- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
 +++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
 @@ -155,6 +155,13 @@ public class SharkurConfig {
          sharkurCommandsPrefix = getString("settings.messages.sharkur-commands-prefix", sharkurCommandsPrefix);
      }
  
-+    public static String playerJoinMessage = "<yellow>{} joined the game.";
-+    public static String playerLeaveMessage = "<yellow>{} left the game.";
++    public static String playerJoinMessage = "<gradient:#1db0f3:#64cdfd>{}</gradient:#1db0f3:#64cdfd> <white>joined the game.</white>";
++    public static String playerLeaveMessage = "<gradient:#1db0f3:#64cdfd>{}</gradient:#1db0f3:#64cdfd> <white>left the game.</white>";
 +    private static void playerMessages() {
 +        playerJoinMessage = getString("settings.messages.player.join", playerJoinMessage);
 +        playerLeaveMessage = getString("settings.messages.player.left", playerLeaveMessage);
