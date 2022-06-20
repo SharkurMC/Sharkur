@@ -1,7 +1,7 @@
 pipeline {
   agent any
-    environment {
-      DISCORD_WEBHOOK = credentials('jenkins-discord-webhook')
+  environment {
+    DISCORD_WEBHOOK = credentials('jenkins-discord-webhook')
   }
   stages {
     stage('Pre-Build') {
