@@ -5,10 +5,10 @@ Subject: [PATCH] Add ability to toggle default commands
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index 44673fcec96a075bd02800b51318832d82b63c7e..d4d692c13caa0b0b57d58b47d3c7bbf01a84d41d 100644
+index 9222adc75b68b9a899b4eca2a1803844b9cdbe26..1008f37ab20a52a397ca5e192af81ef768af5ad6 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -2259,6 +2259,44 @@ public final class Bukkit {
+@@ -2290,6 +2290,44 @@ public final class Bukkit {
          return server.permissionMessage();
      }
  
@@ -54,10 +54,10 @@ index 44673fcec96a075bd02800b51318832d82b63c7e..d4d692c13caa0b0b57d58b47d3c7bbf0
       * Creates a PlayerProfile for the specified uuid, with name as null.
       *
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 1be0365d32aaca0098a05b6c667ced33a4f20f7e..7906282bec71d1bc3870da69e8f006394772bc02 100644
+index af6c76ff488af2cd4de1efa89b7983720aa14fcd..1cc098ebb99c92fa2aac6c81042c4a6f35d1cd54 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -1980,6 +1980,36 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -2005,6 +2005,36 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
       */
      @NotNull net.kyori.adventure.text.Component permissionMessage();
  
