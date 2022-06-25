@@ -30,7 +30,7 @@ pipeline {
 
   }
   tools {
-    jdk 'OpenJDK-17'
+    jdk 'OpenJDK-18'
   }
   post {
     success {
