@@ -25,10 +25,10 @@ index 4487138c167b7861406a626ad99b64486eae5aea..5c045efaab0c1f06bba31c377389bffa
          gg.pufferfish.pufferfish.PufferfishCommand.init(); // Pufferfish
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 430e301a6d3489463f037dcbcedc1648c6f1f412..76c0ab21ece3d2fe876d432846862846934b97d9 100644
+index 685e739e24c379e8ae80385e1835ab613c6e7ed0..972f0dd571b14a4f1008f5f4df577dd7d8417e77 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -985,6 +985,7 @@ public final class CraftServer implements Server {
+@@ -997,6 +997,7 @@ public final class CraftServer implements Server {
          org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
          this.console.paperConfigurations.reloadConfigs(this.console);
          org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur
@@ -36,7 +36,7 @@ index 430e301a6d3489463f037dcbcedc1648c6f1f412..76c0ab21ece3d2fe876d432846862846
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -1017,6 +1018,7 @@ public final class CraftServer implements Server {
+@@ -1029,6 +1030,7 @@ public final class CraftServer implements Server {
          org.spigotmc.SpigotConfig.registerCommands(); // Spigot
          io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
          org.purpurmc.purpur.PurpurConfig.registerCommands(); // Purpur
@@ -44,7 +44,7 @@ index 430e301a6d3489463f037dcbcedc1648c6f1f412..76c0ab21ece3d2fe876d432846862846
          this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
          this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
  
-@@ -2777,6 +2779,13 @@ public final class CraftServer implements Server {
+@@ -2789,6 +2791,13 @@ public final class CraftServer implements Server {
          }
          // Purpur end
  

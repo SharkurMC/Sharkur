@@ -5,10 +5,10 @@ Subject: [PATCH] Add ability to toggle default commands
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 76c0ab21ece3d2fe876d432846862846934b97d9..dc74094062e1347c428abcdac1c0276a3690dafe 100644
+index 972f0dd571b14a4f1008f5f4df577dd7d8417e77..78ac10d5a8ba86d7c9a560954aa09db83af9ec62 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2902,6 +2902,28 @@ public final class CraftServer implements Server {
+@@ -2914,6 +2914,28 @@ public final class CraftServer implements Server {
          return io.papermc.paper.configuration.GlobalConfiguration.get().messages.noPermission;
      }
  
