@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 26 Jun 2022 13:11:13 +0200
+Subject: [PATCH] Disable spawners on low TPS
+
+
+diff --git a/src/main/java/net/minecraft/world/level/BaseSpawner.java b/src/main/java/net/minecraft/world/level/BaseSpawner.java
+index deffa277272c34adb39d7c3e69e91502780a090e..da19282b2e5edb64e39ebea8ac9c302b05bbe97b 100644
+--- a/src/main/java/net/minecraft/world/level/BaseSpawner.java
++++ b/src/main/java/net/minecraft/world/level/BaseSpawner.java
+@@ -78,6 +78,7 @@ public abstract class BaseSpawner {
+     }
+ 
+     public void serverTick(ServerLevel world, BlockPos pos) {
++        if (org.sharkurmc.sharkur.SharkurConfig.disableSpawnersBelowTPS != -1 && world.getServer().getAverageTickTime() <= org.sharkurmc.sharkur.SharkurConfig.disableSpawnersBelowTPS) return; // Sharkur - disable spawners on low TPS
+         // Paper start - Configurable mob spawner tick rate
+         if (spawnDelay > 0 && --tickDelay > 0) return;
+         tickDelay = world.paperConfig().tickRates.mobSpawner;
+diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+index f0c2ae60748cb366fe0d9329aea37cc9f34bcd70..20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9 100644
+--- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
++++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+@@ -184,4 +184,9 @@ public class SharkurConfig {
+     private static void itemStack() {
+         disableItemStackRepairCost = getBoolean("settings.item-stack.disable-repair-cost", disableItemStackRepairCost);
+     }
++
++    public static double disableSpawnersBelowTPS = 5.0;
++    private static void spawners() {
++        disableSpawnersBelowTPS = getDouble("settings.spawners.disable-below-tps", disableSpawnersBelowTPS);
++    }
+ }
