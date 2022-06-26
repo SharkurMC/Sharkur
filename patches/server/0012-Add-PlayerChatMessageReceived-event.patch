@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 26 Jun 2022 15:50:30 +0200
+Subject: [PATCH] Add PlayerChatMessageReceived event
+
+
+diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
+index b13d516d91788713768b5c336537ffe31653b074..7b05a524b6daba65ac254b455c739b4e5101d4c3 100644
+--- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
++++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
+@@ -144,6 +144,8 @@ public final class ChatProcessor {
+                 viewer.sendMessage(player, renderer.render(player, displayName, message, viewer), MessageType.CHAT);
+             }
+         }
++
++        this.post(new org.sharkurmc.sharkur.event.PlayerChatMessageReceived(event.isAsynchronous(), event.getPlayer(), viewers, renderer, message, originalMessage)); // Sharkur - Add PlayerChatMessageReceived event
+     }
+ 
+     private Set<Audience> viewersFromLegacy(final Set<Player> recipients) {

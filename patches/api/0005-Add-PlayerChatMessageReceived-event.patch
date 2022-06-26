@@ -1,0 +1,103 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 26 Jun 2022 15:50:38 +0200
+Subject: [PATCH] Add PlayerChatMessageReceived event
+
+
+diff --git a/src/main/java/org/sharkurmc/sharkur/event/PlayerChatMessageReceived.java b/src/main/java/org/sharkurmc/sharkur/event/PlayerChatMessageReceived.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..25ba9c0625f3e9b4b32b833b418a13d5f992bd58
+--- /dev/null
++++ b/src/main/java/org/sharkurmc/sharkur/event/PlayerChatMessageReceived.java
+@@ -0,0 +1,91 @@
++package org.sharkurmc.sharkur.event;
++
++import io.papermc.paper.chat.ChatRenderer;
++import net.kyori.adventure.audience.Audience;
++import net.kyori.adventure.text.Component;
++import org.bukkit.entity.Player;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.player.PlayerEvent;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.Set;
++
++/**
++ * An event fired after the message has been sent. In this case, you can no longer edit the information
++ * but only retrieve the information. To edit the information, see {@link io.papermc.paper.event.player.AsyncChatEvent}
++ */
++public class PlayerChatMessageReceived extends PlayerEvent {
++    private static final HandlerList handlers = new HandlerList();
++    private final Set<Audience> viewers;
++    private final Component originalMessage;
++    private ChatRenderer renderer;
++    private Component message;
++    private boolean cancelled = false;
++
++    public PlayerChatMessageReceived(final boolean async, final @NotNull Player player, final @NotNull Set<Audience> viewers, final @NotNull ChatRenderer renderer, final @NotNull Component message, final @NotNull Component originalMessage) {
++        super(player, async);
++        this.viewers = viewers;
++        this.renderer = renderer;
++        this.message = message;
++        this.originalMessage = originalMessage;
++    }
++
++    /**
++     * Gets a set of {@link Audience audiences} that this chat message will be displayed to.
++     *
++     * <p>The set returned is not guaranteed to be mutable and may auto-populate
++     * on access. Any listener accessing the returned set should be aware that
++     * it may reduce performance for a lazy set implementation.</p>
++     *
++     * <p>Listeners should be aware that modifying the list may throw {@link
++     * UnsupportedOperationException} if the event caller provides an
++     * unmodifiable set.</p>
++     *
++     * @return a set of {@link Audience audiences} who will receive the chat message
++     */
++    @NotNull
++    public final Set<Audience> getViewers() {
++        return this.viewers;
++    }
++
++    /**
++     * Gets the chat renderer.
++     *
++     * @return the chat renderer
++     */
++    @NotNull
++    public final ChatRenderer getRenderer() {
++        return this.renderer;
++    }
++
++    /**
++     * Gets the user-supplied message.
++     *
++     * @return the user-supplied message
++     */
++    @NotNull
++    public final Component getMessage() {
++        return this.message;
++    }
++
++    /**
++     * Gets the original and unmodified user-supplied message.
++     *
++     * @return the original user-supplied message
++     */
++    @NotNull
++    public final Component getOriginalMessage() {
++        return this.originalMessage;
++    }
++
++    @Override
++    @NotNull
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    @NotNull
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
