@@ -6,7 +6,7 @@ Subject: [PATCH] Include BungeeGuard
 Automatically downloads BungeeGuard plugin if bungeeguard support is enabled in spigot.yml
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index dc74094062e1347c428abcdac1c0276a3690dafe..73e2f8888bf55d46dbfda21be425b37e2a14a496 100644
+index dc74094062e1347c428abcdac1c0276a3690dafe..4df1fcbfc2b47b630aecee222ed99217899a2fb8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -411,6 +411,7 @@ public final class CraftServer implements Server {
@@ -32,10 +32,10 @@ index dc74094062e1347c428abcdac1c0276a3690dafe..73e2f8888bf55d46dbfda21be425b37e
 +
 +        // Sharkur start - Include BungeeGuard
 +        if (!bungeeGuardLoaded && org.spigotmc.SpigotConfig.bungee) {
-+            org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("You have bungeecord support enabled but you don't have BungeeGuard set up!");
++            org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("You have bungeecord support enabled but you don't have BungeeGuard plugin!");
 +            org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("Your server may simply be griefed if you have online mode turned off.!");
-+            org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("We will automatically download BungeeGuard. After downloading, shut down the server and install it on your proxy.");
-+            org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("Then set it up in plugins/BungeeGuard");
++            org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("Sharkur will automatically download BungeeGuard. After downloading, shut down the server and install it on your proxy.");
++            org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("Then configure it in plugins/BungeeGuard/config.yml");
 +            try {
 +                File file = new File("cache", "BungeeGuard.jar");
 +                try (java.io.BufferedInputStream in = new java.io.BufferedInputStream(new java.net.URL("https://github.com/lucko/BungeeGuard/releases/latest/download/BungeeGuard.jar").openStream()); java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
@@ -48,10 +48,10 @@ index dc74094062e1347c428abcdac1c0276a3690dafe..73e2f8888bf55d46dbfda21be425b37e
 +                } catch (IOException e) {
 +                    e.printStackTrace();
 +                }
-+                Plugin spark = this.pluginManager.loadPlugin(file);
-+                String message = String.format("Loading %s", spark.getDescription().getFullName());
-+                spark.getLogger().info(message);
-+                spark.onLoad();
++                Plugin bungeeGuard = this.pluginManager.loadPlugin(file);
++                String message = String.format("Loading %s", bungeeGuard.getDescription().getFullName());
++                bungeeGuard.getLogger().info(message);
++                bungeeGuard.onLoad();
 +            } catch (Exception e) {
 +                getLogger().severe("Failed to download and load BungeeGuard plugin");
 +                e.printStackTrace();
