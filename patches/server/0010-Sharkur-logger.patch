@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 26 Jun 2022 11:12:03 +0200
+Subject: [PATCH] Sharkur logger
+
+
+diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurLogger.java b/src/main/java/org/sharkurmc/sharkur/SharkurLogger.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..6c57659b8cb505421b08c26a72d46281ddfa8ec5
+--- /dev/null
++++ b/src/main/java/org/sharkurmc/sharkur/SharkurLogger.java
+@@ -0,0 +1,17 @@
++package org.sharkurmc.sharkur;
++
++import org.bukkit.Bukkit;
++
++import java.util.logging.Level;
++import java.util.logging.Logger;
++
++public class SharkurLogger extends Logger {
++    public static final SharkurLogger LOGGER = new SharkurLogger();
++
++    private SharkurLogger() {
++        super("Sharkur", null);
++
++        setParent(Bukkit.getLogger());
++        setLevel(Level.ALL);
++    }
++}
+\ No newline at end of file

@@ -23,18 +23,20 @@ index 0d9e2b3728f9ab500bd5e44702718535d338e9a5..d7004b6f63b3127faae3ff7ed108a885
      public boolean isNaggable() {
          throw new UnsupportedOperationException("Not supported.");
 diff --git a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
-index cbafdf8123ab039bf6c29d78e313a0bac76f296e..85b325e22e95a4d573c352c782d6c3e7cde2a93b 100644
+index cbafdf8123ab039bf6c29d78e313a0bac76f296e..760e2bf335bf0174f79807f95116152620418d10 100644
 --- a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
 +++ b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
-@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
+@@ -6,7 +6,9 @@ import org.bukkit.Bukkit;
  import org.bukkit.Location;
  import org.bukkit.command.Command;
  import org.bukkit.command.CommandSender;
 +import org.bukkit.plugin.Plugin;
  import org.sharkurmc.sharkur.SharkurConfig;
++import org.sharkurmc.sharkur.SharkurLogger;
  
  import java.io.File;
-@@ -18,7 +19,7 @@ public class SharkurCommand extends Command {
+ import java.util.Collections;
+@@ -18,7 +20,7 @@ public class SharkurCommand extends Command {
      public SharkurCommand(String name) {
          super(name);
          this.description = "Sharkur related commands";
@@ -43,7 +45,7 @@ index cbafdf8123ab039bf6c29d78e313a0bac76f296e..85b325e22e95a4d573c352c782d6c3e7
          this.setPermission("bukkit.command.sharkur");
      }
  
-@@ -28,6 +29,10 @@ public class SharkurCommand extends Command {
+@@ -28,6 +30,10 @@ public class SharkurCommand extends Command {
              return Stream.of("reload", "version")
                      .filter(arg -> arg.startsWith(args[0].toLowerCase()))
                      .collect(Collectors.toList());
@@ -54,7 +56,7 @@ index cbafdf8123ab039bf6c29d78e313a0bac76f296e..85b325e22e95a4d573c352c782d6c3e7
          }
          return Collections.emptyList();
      }
-@@ -36,20 +41,39 @@ public class SharkurCommand extends Command {
+@@ -36,20 +42,39 @@ public class SharkurCommand extends Command {
      public boolean execute(CommandSender sender, String commandLabel, String[] args) {
          if (!testPermission(sender)) return true;
  
@@ -89,7 +91,7 @@ index cbafdf8123ab039bf6c29d78e313a0bac76f296e..85b325e22e95a4d573c352c782d6c3e7
 +                for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 +                    plugin.onReload();
 +
-+                    MinecraftServer.LOGGER.info("[Sharkur] Plugin " + plugin.getName() + " has been reloaded");
++                    SharkurLogger.LOGGER.info("Plugin " + plugin.getName() + " has been reloaded");
 +                    pluginsReloadedCount++;
 +                }
 +
