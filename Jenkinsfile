@@ -2,6 +2,8 @@ pipeline {
   agent any
   environment {
     DISCORD_WEBHOOK = credentials('jenkins-discord-webhook')
+    REPOSILITE_USER = credentials('REPOSILITE_USER')
+    REPOSILITE_PASSWORD = credentials('REPOSILITE_PASSWORD')
   }
   stages {
     stage('Pre-Build') {
