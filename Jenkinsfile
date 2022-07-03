@@ -28,6 +28,12 @@ pipeline {
       }
     }
 
+    stage('Reposilite') {
+      steps {
+        sh "./gradlew publish -PsharkurUsername$REPOSILITE_USER -PsharkurPassword=$REPOSILITE_PASSWORD"
+      }
+    }
+
   }
   tools {
     jdk 'OpenJDK-18'

@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 3 Jul 2022 19:21:55 +0200
+Subject: [PATCH] Add publishing to reposilite
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index b950096a71ba6a3b059cb5385ae39e5f7f2728d8..6cf98aacdd3b813ff1be40aaa7bbf12325eee8bf 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -152,3 +152,18 @@ tasks.check {
+     dependsOn(scanJar)
+ }
+ // Paper end
++
++// Sharkur start
++publishing {
++    repositories {
++        maven {
++            name = "sharkur"
++            url = uri("https://reposilite.cezarsalat.tk/releases")
++            credentials(PasswordCredentials::class)
++            authentication {
++                create<BasicAuthentication>("basic")
++            }
++        }
++    }
++}
++// Sharkur end
+\ No newline at end of file
