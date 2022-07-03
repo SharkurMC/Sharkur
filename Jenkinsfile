@@ -32,7 +32,7 @@ pipeline {
 
     stage('Reposilite') {
       steps {
-        sh "./gradlew publish -PsharkurUsername$REPOSILITE_USER -PsharkurPassword=$REPOSILITE_PASSWORD"
+        sh "./gradlew publish -PsharkurUsername=$REPOSILITE_USER -PsharkurPassword=$REPOSILITE_PASSWORD"
       }
     }
 
