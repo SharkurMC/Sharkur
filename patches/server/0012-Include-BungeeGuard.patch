@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Sun, 3 Jul 2022 18:22:58 +0200
+Subject: [PATCH] Include BungeeGuard
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 694cbdc1b8c4cca67ccc29e694358d5c8433c583..4aa1dae2849ffae83b46072959557e27f13f72ee 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -444,6 +444,25 @@ public final class CraftServer implements Server {
+                 getLogger().severe("Purpur: Failed to download and install spark plugin");
+                 e.printStackTrace();
+             }
++            // Sharkur start
++            if (org.spigotmc.SpigotConfig.bungee) {
++                org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("You have bungeecord support enabled but you don't have BungeeGuard plugin!");
++                org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("Your server may simply be griefed if you have online mode turned off.!");
++                org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("Sharkur will automatically download BungeeGuard. After downloading, shut down the server and install it on your proxy.");
++                org.sharkurmc.sharkur.SharkurLogger.LOGGER.warning("Then configure it in plugins/BungeeGuard/config.yml");
++                try {
++                    File file = new File("cache", "BungeeGuard.jar");
++                    file.getParentFile().mkdirs();
++
++                    java.nio.file.Files.copy(new java.net.URL("https://github.com/lucko/BungeeGuard/releases/latest/download/BungeeGuard.jar").openStream(), file.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
++
++                    extraJars.add(file);
++                } catch (Exception e) {
++                    getLogger().severe("Sharkur: Failed to download and install BungeeGuard plugin");
++                    e.printStackTrace();
++                }
++            }
++            // Sharkur end
+             Plugin[] plugins = this.pluginManager.loadPlugins(pluginFolder, extraJars);
+             // Purpur end
+             // Paper end
