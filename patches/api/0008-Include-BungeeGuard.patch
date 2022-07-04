@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Mon, 4 Jul 2022 19:20:25 +0200
+Subject: [PATCH] Include BungeeGuard
+
+
+diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+index 353bed51cf7a5be0e7a75c72290976348631381e..eb09b91706daf869ed6d526f015e2d1f151c506e 100644
+--- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
++++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+@@ -170,6 +170,12 @@ public final class SimplePluginManager implements PluginManager {
+                 continue;
+             }
+             // Purpur end
++            // Sharkur start
++            if (plugins.containsKey(description.getName()) && description.getName().equalsIgnoreCase("bungeeguard")) {
++                server.getLogger().log(Level.INFO, "Sharkur: Using user-provided BungeeGuard plugin instead of our own.");
++                continue;
++            }
++            // Sharkur end
+ 
+             File replacedFile = plugins.put(description.getName(), file);
+             if (replacedFile != null) {
