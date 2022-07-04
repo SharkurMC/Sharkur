@@ -127,7 +127,7 @@ index 760e2bf335bf0174f79807f95116152620418d10..856c192ce1924f2901def5a1229775c2
          return true;
 diff --git a/src/main/java/org/sharkurmc/sharkur/utils/Updater.java b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5cc59f866a9c4e0bf5e43b9d6a9a60e1795c05c5
+index 0000000000000000000000000000000000000000..7243f17252d7680b76adba0939b59efb2c91b615
 --- /dev/null
 +++ b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 @@ -0,0 +1,62 @@
@@ -135,12 +135,15 @@ index 0000000000000000000000000000000000000000..5cc59f866a9c4e0bf5e43b9d6a9a60e1
 +
 +import com.destroystokyo.paper.PaperVersionFetcher;
 +import net.kyori.adventure.text.minimessage.MiniMessage;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerPlayer;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
 +import org.bukkit.entity.Player;
 +import org.bukkit.plugin.PluginBase;
 +import org.sharkurmc.sharkur.SharkurConfig;
 +import org.sharkurmc.utilities.java.updater.JavaUpdater;
++import org.spigotmc.SpigotConfig;
 +
 +public class Updater {
 +    private static final PluginBase plugin = new MinecraftInternalPlugin();
@@ -161,13 +164,12 @@ index 0000000000000000000000000000000000000000..5cc59f866a9c4e0bf5e43b9d6a9a60e1
 +                    if (p.hasPermission("sharkurmc.notify.updated")) {
 +                        p.sendMessage(
 +                                MiniMessage.miniMessage().deserialize(
-+                                        SharkurConfig.sharkurCommandsPrefix + " Please use <#64cdfd>/sharkur update confirm<#64cdfd> to apply the update and restart the server."
++                                        SharkurConfig.sharkurCommandsPrefix + " Please use <#64cdfd>/sharkur update confirm</#64cdfd> to apply the update and restart the server."
 +                                )
 +                        );
 +                    }
 +                }
 +            } catch(Exception e) {
-+                e.printStackTrace();
 +                // Do nothing
 +            }
 +        });
@@ -177,11 +179,9 @@ index 0000000000000000000000000000000000000000..5cc59f866a9c4e0bf5e43b9d6a9a60e1
 +        underUpdating = false;
 +        waitingForConfirmation = false;
 +
-+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-+            Bukkit.getServer().shutdown();
++        JavaUpdater.restart("sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
 +
-+            JavaUpdater.restart("sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
-+        });
++        Bukkit.shutdown();
 +    }
 +    public static boolean latestVersion() {
 +        if (cachedDistance != null) return cachedDistance;
