@@ -1,0 +1,195 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Mon, 4 Jul 2022 22:25:07 +0200
+Subject: [PATCH] Sharkur auto updater
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index c1236311578e84d567371c09d58d7b6225511c5b..edb5d4efc166f8d5a10ba5a4dfb7c58d584a1c8b 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -46,6 +46,7 @@ dependencies {
+ 
+     implementation("cat.inspiracio:rhino-js-engine:1.7.7.1") // Purpur
+     implementation("dev.omega24:upnp4j:1.0") // Purpur
++    implementation("org.sharkurmc.utilities:utilities-java-updater:1.0-SNAPSHOT") // Sharkur
+ 
+     runtimeOnly("org.apache.maven:maven-resolver-provider:3.8.5")
+     runtimeOnly("org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3")
+diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+index ed90c7d3af5dc34a0860b68a2bc5d2b3058e274d..cb1524d406d067758b593b148e6bb68977f500be 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
++++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+@@ -109,7 +109,7 @@ public class PaperVersionFetcher implements VersionFetcher {
+     }
+ 
+     // Contributed by Techcable <Techcable@outlook.com> in GH-65
+-    private static int fetchDistanceFromGitHub(@Nonnull String repo, @Nonnull String branch, @Nonnull String hash) {
++    public static int fetchDistanceFromGitHub(@Nonnull String repo, @Nonnull String branch, @Nonnull String hash) { // Sharkur: private -> public
+         try {
+             HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/" + repo + "/compare/" + branch + "..." + hash).openConnection();
+             connection.connect();
+diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..870b376268318e3c2378edf18302d2721eb8d459 100644
+--- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
++++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
+@@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
+ import org.bukkit.configuration.InvalidConfigurationException;
+ import org.bukkit.configuration.file.YamlConfiguration;
+ import org.sharkurmc.sharkur.command.SharkurCommand;
++import org.sharkurmc.sharkur.utils.Updater;
+ 
+ import java.io.File;
+ import java.io.IOException;
+@@ -189,4 +190,11 @@ public class SharkurConfig {
+     private static void spawners() {
+         disableSpawnersBelowTPS = getDouble("settings.spawners.disable-below-tps", disableSpawnersBelowTPS);
+     }
++
++    public static boolean updaterAutoUpdate = false;
++    private static void updater() {
++        updaterAutoUpdate = getBoolean("settings.updater.auto-update", updaterAutoUpdate);
++
++        if (updaterAutoUpdate) Updater.update();
++    }
+ }
+diff --git a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
+index 760e2bf335bf0174f79807f95116152620418d10..856c192ce1924f2901def5a1229775c26409fcfe 100644
+--- a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
++++ b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
+@@ -6,9 +6,11 @@ import org.bukkit.Bukkit;
+ import org.bukkit.Location;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
+ import org.bukkit.plugin.Plugin;
+ import org.sharkurmc.sharkur.SharkurConfig;
+ import org.sharkurmc.sharkur.SharkurLogger;
++import org.sharkurmc.sharkur.utils.Updater;
+ 
+ import java.io.File;
+ import java.util.Collections;
+@@ -20,20 +22,23 @@ public class SharkurCommand extends Command {
+     public SharkurCommand(String name) {
+         super(name);
+         this.description = "Sharkur related commands";
+-        this.usageMessage = "/sharkur [reload [plugins | config] | version]";
++        this.usageMessage = "/sharkur [reload [plugins | config] | version | update [confirm]]";
+         this.setPermission("bukkit.command.sharkur");
+     }
+ 
+     @Override
+     public List<String> tabComplete(CommandSender sender, String alias, String[] args, Location location) throws IllegalArgumentException {
+         if (args.length == 1) {
+-            return Stream.of("reload", "version")
++            return Stream.of("reload", "version", "update")
+                     .filter(arg -> arg.startsWith(args[0].toLowerCase()))
+                     .collect(Collectors.toList());
+         } else if (args.length == 2) {
+             if (args[0].equalsIgnoreCase("reload")) {
+                 return List.of("plugins", "config");
+             }
++            if (args[0].equalsIgnoreCase("update")) {
++                return List.of("confirm");
++            }
+         }
+         return Collections.emptyList();
+     }
+@@ -80,6 +85,29 @@ public class SharkurCommand extends Command {
+ 
+             if (version.startsWith("null")) version = "unknown, running from ide?";
+             sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Version: <#64cdfd>" + version);
++        } else if (args[0].equalsIgnoreCase("update")) {
++            if (args.length > 1 && Updater.underUpdating && Updater.waitingForConfirmation && args[1].equalsIgnoreCase("confirm")) {
++                Updater.restart();
++            } else {
++                if (Updater.underUpdating) {
++                    sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Server is currently being updated.");
++                    return true;
++                }
++
++                if (Updater.cachedDistance != null && Updater.cachedDistance) {
++                    sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " You are running the latest version.");
++                    return true;
++                }
++
++                Bukkit.getScheduler().runTaskAsynchronously(new MinecraftInternalPlugin(), () -> {
++                    if (Updater.latestVersion()) {
++                        sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " You are running the latest version.");
++                    }
++
++                    sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Check console for more informations.");
++                    Updater.update();
++                });
++            }
+         }
+ 
+         return true;
+diff --git a/src/main/java/org/sharkurmc/sharkur/utils/Updater.java b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..5cc59f866a9c4e0bf5e43b9d6a9a60e1795c05c5
+--- /dev/null
++++ b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
+@@ -0,0 +1,62 @@
++package org.sharkurmc.sharkur.utils;
++
++import com.destroystokyo.paper.PaperVersionFetcher;
++import net.kyori.adventure.text.minimessage.MiniMessage;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
++import org.bukkit.entity.Player;
++import org.bukkit.plugin.PluginBase;
++import org.sharkurmc.sharkur.SharkurConfig;
++import org.sharkurmc.utilities.java.updater.JavaUpdater;
++
++public class Updater {
++    private static final PluginBase plugin = new MinecraftInternalPlugin();
++    public static Boolean cachedDistance = null;
++    public static boolean underUpdating;
++    public static boolean waitingForConfirmation;
++
++    public static void update() {
++        if (latestVersion()) return;
++
++        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
++            try {
++                underUpdating = true;
++                JavaUpdater.start("sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar", "https://jenkins.cezarsalat.tk");
++                waitingForConfirmation = true;
++
++                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
++                    if (p.hasPermission("sharkurmc.notify.updated")) {
++                        p.sendMessage(
++                                MiniMessage.miniMessage().deserialize(
++                                        SharkurConfig.sharkurCommandsPrefix + " Please use <#64cdfd>/sharkur update confirm<#64cdfd> to apply the update and restart the server."
++                                )
++                        );
++                    }
++                }
++            } catch(Exception e) {
++                e.printStackTrace();
++                // Do nothing
++            }
++        });
++    }
++
++    public static void restart() {
++        underUpdating = false;
++        waitingForConfirmation = false;
++
++        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
++            Bukkit.getServer().shutdown();
++
++            JavaUpdater.restart("sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
++        });
++    }
++    public static boolean latestVersion() {
++        if (cachedDistance != null) return cachedDistance;
++
++        String[] parts = Bukkit.getVersion().substring("git-Sharkur-".length()).split("[-\\s]");
++        int distance = PaperVersionFetcher.fetchDistanceFromGitHub("SharkurMC/Sharkur", "ver/" + Bukkit.getMinecraftVersion(), parts[0]);
++        cachedDistance = distance == 0;
++
++        return distance == 0;
++    }
++}
