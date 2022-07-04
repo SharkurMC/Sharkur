@@ -101,10 +101,10 @@ index fba5dbdb7bcbb55400ef18342c9b54612972a718..ed90c7d3af5dc34a0860b68a2bc5d2b3
              ).openBufferedStream()) {
                  JsonObject json = new Gson().fromJson(reader, JsonObject.class);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 9534a3bc9bba12bbeaba3ec86b371f9c32c7542f..dd9c4dca0bbc8c42e9c41771a1ee7b833ad7e4cc 100644
+index 7208236ee3c604620fd0d0afe49215320e45e24b..c665f14b3b457336d7535dbc763510a6899be619 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -245,7 +245,7 @@ import javax.annotation.Nullable; // Paper
+@@ -246,7 +246,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
