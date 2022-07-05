@@ -130,13 +130,15 @@ index 760e2bf335bf0174f79807f95116152620418d10..62e4f1d7495a5fa0af25bc5b56549ccc
          return true;
 diff --git a/src/main/java/org/sharkurmc/sharkur/utils/Updater.java b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4c58a0b795b3478bf4580c753ad8561523c96b5f
+index 0000000000000000000000000000000000000000..52d816811d95059777f1385613673b3151f72b2a
 --- /dev/null
 +++ b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,102 @@
 +package org.sharkurmc.sharkur.utils;
 +
 +import com.destroystokyo.paper.PaperVersionFetcher;
++import com.google.common.base.Charsets;
++import com.google.gson.JsonSyntaxException;
 +import net.kyori.adventure.text.minimessage.MiniMessage;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
@@ -144,6 +146,13 @@ index 0000000000000000000000000000000000000000..4c58a0b795b3478bf4580c753ad85615
 +import org.bukkit.plugin.PluginBase;
 +import org.sharkurmc.sharkur.SharkurConfig;
 +import org.sharkurmc.utilities.java.updater.JavaUpdater;
++
++import java.io.BufferedReader;
++import java.io.IOException;
++import java.io.InputStreamReader;
++import java.net.HttpURLConnection;
++import java.net.URL;
++import java.util.stream.Collectors;
 +
 +public class Updater {
 +    private static final PluginBase plugin = new MinecraftInternalPlugin();
@@ -157,7 +166,13 @@ index 0000000000000000000000000000000000000000..4c58a0b795b3478bf4580c753ad85615
 +        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 +            try {
 +                underUpdating = true;
-+                JavaUpdater.start(SharkurConfig.updaterServerJarName, "https://jenkins.cezarsalat.tk/job/Sharkur/job/ver%2F1.19/lastSuccessfulBuild/artifact/build/libs/sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
++                String buildId = getLastSuccessfulBuild();
++                if (buildId == null) {
++                    underUpdating = false;
++                    return;
++                }
++
++                JavaUpdater.start(SharkurConfig.updaterServerJarName, "https://jenkins.cezarsalat.tk/job/Sharkur/job/ver%2F1.19/"+buildId+"/artifact/build/libs/sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
 +                waitingForConfirmation = true;
 +
 +                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
@@ -202,5 +217,22 @@ index 0000000000000000000000000000000000000000..4c58a0b795b3478bf4580c753ad85615
 +        cachedDistance = distance == 0;
 +
 +        return distance == 0;
++    }
++
++    public static String getLastSuccessfulBuild() {
++        try {
++            HttpURLConnection connection = (HttpURLConnection) new URL("https://jenkins.cezarsalat.tk/job/Sharkur/job/ver%2F1.19/lastSuccessfulBuild/buildNumber").openConnection();
++            connection.connect();
++            if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) return null;
++            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charsets.UTF_8))) {
++                return reader.lines().collect(Collectors.joining());
++            } catch (JsonSyntaxException | NumberFormatException e) {
++                e.printStackTrace();
++                return null;
++            }
++        } catch (IOException e) {
++            e.printStackTrace();
++            return null;
++        }
 +    }
 +}
