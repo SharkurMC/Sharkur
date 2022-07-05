@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xHyroM <generalkubo@gmail.com>
+Date: Tue, 5 Jul 2022 12:09:02 +0200
+Subject: [PATCH] Use git hash instead build number
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 592bc0467d356a6a04cf7df4b1da3f40a6cd435f..37f01a8a6b1a576cf08a4ea606adf459713e0d56 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -82,7 +82,7 @@ tasks.jar {
+     manifest {
+         val git = Git(rootProject.layout.projectDirectory.path)
+         val gitHash = git("rev-parse", "--short=7", "HEAD").getText().trim()
+-        val implementationVersion = System.getenv("BUILD_NUMBER") ?: "\"$gitHash\""
++        val implementationVersion = "\"$gitHash\"" // Sharkur
+         val date = git("show", "-s", "--format=%ci", gitHash).getText().trim() // Paper
+         val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
+         attributes(

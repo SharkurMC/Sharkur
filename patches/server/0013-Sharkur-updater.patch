@@ -30,7 +30,7 @@ index ed90c7d3af5dc34a0860b68a2bc5d2b3058e274d..cb1524d406d067758b593b148e6bb689
              HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/" + repo + "/compare/" + branch + "..." + hash).openConnection();
              connection.connect();
 diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
-index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..870b376268318e3c2378edf18302d2721eb8d459 100644
+index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..e298395512bb3d158735115e83b636d1a3d9652b 100644
 --- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
 +++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
 @@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
@@ -41,14 +41,16 @@ index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..870b376268318e3c2378edf18302d272
  
  import java.io.File;
  import java.io.IOException;
-@@ -189,4 +190,11 @@ public class SharkurConfig {
+@@ -189,4 +190,13 @@ public class SharkurConfig {
      private static void spawners() {
          disableSpawnersBelowTPS = getDouble("settings.spawners.disable-below-tps", disableSpawnersBelowTPS);
      }
 +
 +    public static boolean updaterAutoUpdate = false;
++    public static String updaterServerJarName = "sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar";
 +    private static void updater() {
 +        updaterAutoUpdate = getBoolean("settings.updater.auto-update", updaterAutoUpdate);
++        updaterServerJarName = getString("settings.updater.server-jar-name", updaterServerJarName);
 +
 +        if (updaterAutoUpdate) Updater.update();
 +    }
@@ -127,7 +129,7 @@ index 760e2bf335bf0174f79807f95116152620418d10..856c192ce1924f2901def5a1229775c2
          return true;
 diff --git a/src/main/java/org/sharkurmc/sharkur/utils/Updater.java b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..05f023c3a7960a4583cbfb6d1f1f1cdae88befdd
+index 0000000000000000000000000000000000000000..816a4c253026db51391048a3d43630179f36d614
 --- /dev/null
 +++ b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 @@ -0,0 +1,70 @@
@@ -154,7 +156,7 @@ index 0000000000000000000000000000000000000000..05f023c3a7960a4583cbfb6d1f1f1cda
 +        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 +            try {
 +                underUpdating = true;
-+                JavaUpdater.start("sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar", "https://jenkins.cezarsalat.tk/job/Sharkur/job/ver%2F1.19/lastSuccessfulBuild/artifact/build/libs/sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
++                JavaUpdater.start(SharkurConfig.updaterServerJarName, "https://jenkins.cezarsalat.tk/job/Sharkur/job/ver%2F1.19/lastSuccessfulBuild/artifact/build/libs/sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
 +                waitingForConfirmation = true;
 +
 +                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
@@ -180,7 +182,7 @@ index 0000000000000000000000000000000000000000..05f023c3a7960a4583cbfb6d1f1f1cda
 +            public void run() {
 +                try {
 +                    long pid = ProcessHandle.current().pid();
-+                    JavaUpdater.restart("sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar", pid);
++                    JavaUpdater.restart(SharkurConfig.updaterServerJarName, pid);
 +                } catch (Exception e) {
 +                    // Do nothing
 +                }
