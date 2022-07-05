@@ -56,7 +56,7 @@ index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..e298395512bb3d158735115e83b636d1
 +    }
  }
 diff --git a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
-index 760e2bf335bf0174f79807f95116152620418d10..856c192ce1924f2901def5a1229775c26409fcfe 100644
+index 760e2bf335bf0174f79807f95116152620418d10..62e4f1d7495a5fa0af25bc5b56549ccc16594991 100644
 --- a/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
 +++ b/src/main/java/org/sharkurmc/sharkur/command/SharkurCommand.java
 @@ -6,9 +6,11 @@ import org.bukkit.Bukkit;
@@ -97,7 +97,7 @@ index 760e2bf335bf0174f79807f95116152620418d10..856c192ce1924f2901def5a1229775c2
          }
          return Collections.emptyList();
      }
-@@ -80,6 +85,29 @@ public class SharkurCommand extends Command {
+@@ -80,6 +85,30 @@ public class SharkurCommand extends Command {
  
              if (version.startsWith("null")) version = "unknown, running from ide?";
              sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Version: <#64cdfd>" + version);
@@ -118,6 +118,7 @@ index 760e2bf335bf0174f79807f95116152620418d10..856c192ce1924f2901def5a1229775c2
 +                Bukkit.getScheduler().runTaskAsynchronously(new MinecraftInternalPlugin(), () -> {
 +                    if (Updater.latestVersion()) {
 +                        sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " You are running the latest version.");
++                        return;
 +                    }
 +
 +                    sendMessage(sender, SharkurConfig.sharkurCommandsPrefix + " Check console for more informations.");
@@ -129,7 +130,7 @@ index 760e2bf335bf0174f79807f95116152620418d10..856c192ce1924f2901def5a1229775c2
          return true;
 diff --git a/src/main/java/org/sharkurmc/sharkur/utils/Updater.java b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..816a4c253026db51391048a3d43630179f36d614
+index 0000000000000000000000000000000000000000..4c58a0b795b3478bf4580c753ad8561523c96b5f
 --- /dev/null
 +++ b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 @@ -0,0 +1,70 @@
@@ -197,7 +198,7 @@ index 0000000000000000000000000000000000000000..816a4c253026db51391048a3d4363017
 +        if (cachedDistance != null) return cachedDistance;
 +
 +        String[] parts = Bukkit.getVersion().substring("git-Sharkur-".length()).split("[-\\s]");
-+        int distance = PaperVersionFetcher.fetchDistanceFromGitHub("SharkurMC/Sharkur", "ver/" + Bukkit.getMinecraftVersion(), parts[0]);
++        int distance = PaperVersionFetcher.fetchDistanceFromGitHub("SharkurMC/Sharkur", "ver/" + Bukkit.getMinecraftVersion(), parts[0].replace("\"", ""));
 +        cachedDistance = distance == 0;
 +
 +        return distance == 0;
