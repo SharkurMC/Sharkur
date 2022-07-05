@@ -3,7 +3,6 @@ From: xHyroM <generalkubo@gmail.com>
 Date: Mon, 4 Jul 2022 22:25:07 +0200
 Subject: [PATCH] Sharkur updater
 
-finish updater
 
 diff --git a/build.gradle.kts b/build.gradle.kts
 index c1236311578e84d567371c09d58d7b6225511c5b..592bc0467d356a6a04cf7df4b1da3f40a6cd435f 100644
