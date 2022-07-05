@@ -30,7 +30,7 @@ index ed90c7d3af5dc34a0860b68a2bc5d2b3058e274d..cb1524d406d067758b593b148e6bb689
              HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/" + repo + "/compare/" + branch + "..." + hash).openConnection();
              connection.connect();
 diff --git a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
-index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..e298395512bb3d158735115e83b636d1a3d9652b 100644
+index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..07788a3c12c48bc84fcdc91d48e2df3c07abc32e 100644
 --- a/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
 +++ b/src/main/java/org/sharkurmc/sharkur/SharkurConfig.java
 @@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
@@ -41,15 +41,17 @@ index 20d052b105ad6cae0fa6e43fac45eeeef9a7a3e9..e298395512bb3d158735115e83b636d1
  
  import java.io.File;
  import java.io.IOException;
-@@ -189,4 +190,13 @@ public class SharkurConfig {
+@@ -189,4 +190,15 @@ public class SharkurConfig {
      private static void spawners() {
          disableSpawnersBelowTPS = getDouble("settings.spawners.disable-below-tps", disableSpawnersBelowTPS);
      }
 +
 +    public static boolean updaterAutoUpdate = false;
++    public static boolean updaterAutoConfirmation = false;
 +    public static String updaterServerJarName = "sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar";
 +    private static void updater() {
 +        updaterAutoUpdate = getBoolean("settings.updater.auto-update", updaterAutoUpdate);
++        updaterAutoConfirmation = getBoolean("settings.updater.auto-confirmation", updaterAutoConfirmation);
 +        updaterServerJarName = getString("settings.updater.server-jar-name", updaterServerJarName);
 +
 +        if (updaterAutoUpdate) Updater.update();
@@ -130,10 +132,10 @@ index 760e2bf335bf0174f79807f95116152620418d10..62e4f1d7495a5fa0af25bc5b56549ccc
          return true;
 diff --git a/src/main/java/org/sharkurmc/sharkur/utils/Updater.java b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..52d816811d95059777f1385613673b3151f72b2a
+index 0000000000000000000000000000000000000000..7ef657d62ec6cc0cda0e6bf02e22453e69d757ad
 --- /dev/null
 +++ b/src/main/java/org/sharkurmc/sharkur/utils/Updater.java
-@@ -0,0 +1,102 @@
+@@ -0,0 +1,123 @@
 +package org.sharkurmc.sharkur.utils;
 +
 +import com.destroystokyo.paper.PaperVersionFetcher;
@@ -148,6 +150,7 @@ index 0000000000000000000000000000000000000000..52d816811d95059777f1385613673b31
 +import org.sharkurmc.utilities.java.updater.JavaUpdater;
 +
 +import java.io.BufferedReader;
++import java.io.File;
 +import java.io.IOException;
 +import java.io.InputStreamReader;
 +import java.net.HttpURLConnection;
@@ -173,7 +176,15 @@ index 0000000000000000000000000000000000000000..52d816811d95059777f1385613673b31
 +                }
 +
 +                JavaUpdater.start(SharkurConfig.updaterServerJarName, "https://jenkins.cezarsalat.tk/job/Sharkur/job/ver%2F1.19/"+buildId+"/artifact/build/libs/sharkur-paperclip-1.19-R0.1-SNAPSHOT-reobf.jar");
++                File updatedServerJar = new File("cache", SharkurConfig.updaterServerJarName);
++                if (updatedServerJar.length() < 40000000) throw new Exception("Corrupted?");
++
 +                waitingForConfirmation = true;
++
++                if (SharkurConfig.updaterAutoConfirmation) {
++                    Updater.restart();
++                    return;
++                }
 +
 +                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 +                    if (p.hasPermission("sharkurmc.notify.updated")) {
@@ -185,7 +196,18 @@ index 0000000000000000000000000000000000000000..52d816811d95059777f1385613673b31
 +                    }
 +                }
 +            } catch(Exception e) {
-+                // Do nothing
++                underUpdating = false;
++                waitingForConfirmation = false;
++
++                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
++                    if (p.hasPermission("sharkurmc.notify.updated")) {
++                        p.sendMessage(
++                                MiniMessage.miniMessage().deserialize(
++                                        SharkurConfig.sharkurCommandsPrefix + " Download of the new version failed. Try using <#64cdfd>/sharkur update</#64cdfd> again."
++                                )
++                        );
++                    }
++                }
 +            }
 +        });
 +    }
@@ -209,6 +231,7 @@ index 0000000000000000000000000000000000000000..52d816811d95059777f1385613673b31
 +
 +        Bukkit.shutdown();
 +    }
++
 +    public static boolean latestVersion() {
 +        if (cachedDistance != null) return cachedDistance;
 +
