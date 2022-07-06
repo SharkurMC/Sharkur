@@ -5,10 +5,10 @@ Subject: [PATCH] Add ability to disable repair cost for ItemStack
 
 
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 308bf5525775ab097dddc164e8a08122d571dc1e..e2bc3d5bbb17a5a7b23efed48499992eef3f5e44 100644
+index 0587d845531376676e38d43eadb016f5931a7fd0..3108f5cbef39ad57e00063f59953b0fba7b59a2a 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-@@ -328,6 +328,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -329,6 +329,7 @@ public class AnvilMenu extends ItemCombinerMenu {
                  EnchantmentHelper.setEnchantments(map, itemstack1);
              }
  
