@@ -17,10 +17,10 @@ index 0ecda463452a3f9205dfbd97f28ae7cff5fa7698..206a97d910c3372eab4e327cf96510bd
              sendAllDataToRemote(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
              this.broadcastChanges();
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 4ec80c52cbee9b484e47a93551df4dbf62f6d83e..bd140f865a978f53d80d6556cf2081f405a670cb 100644
+index 5c84b0f8478d20dc3c1593118addeabea28c8e73..82d6a51a28981278ba344baddf9f1fe0bb0ba715 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -228,6 +228,7 @@ public final class ItemStack {
+@@ -229,6 +229,7 @@ public final class ItemStack {
          this.count = count;
          if (this.item != null && this.item.canBeDepleted()) {
              this.setDamageValue(this.getDamageValue());
@@ -28,7 +28,7 @@ index 4ec80c52cbee9b484e47a93551df4dbf62f6d83e..bd140f865a978f53d80d6556cf2081f4
          }
  
          this.updateEmptyCacheFlag();
-@@ -1184,10 +1185,12 @@ public final class ItemStack {
+@@ -1185,10 +1186,12 @@ public final class ItemStack {
      }
  
      public int getBaseRepairCost() {
