@@ -5,10 +5,10 @@ Subject: [PATCH] Include BungeeGuard
 
 
 diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-index 353bed51cf7a5be0e7a75c72290976348631381e..eb09b91706daf869ed6d526f015e2d1f151c506e 100644
+index cc67217ff6003c83f10c6eeb7d4a2205cb0129c4..780ff817833f77275e1d89c3cf9775b6a3c4d9ce 100644
 --- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
 +++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-@@ -170,6 +170,12 @@ public final class SimplePluginManager implements PluginManager {
+@@ -171,6 +171,12 @@ public final class SimplePluginManager implements PluginManager {
                  continue;
              }
              // Purpur end
