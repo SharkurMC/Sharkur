@@ -5,10 +5,10 @@ Subject: [PATCH] Add ability to customizable join and leave messages
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index fecd65dc87a99a5692c59dd590b20327b1eb31c2..815f29045d3d555a7483d3794a2d1c00bc6b7163 100644
+index 366530e2bceb0680c99627abc2c4c48b67f9829d..ee8b170c6f4df0a0a700ba2ad040eb04b042c7bf 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -332,15 +332,22 @@ public abstract class PlayerList {
+@@ -333,15 +333,22 @@ public abstract class PlayerList {
          }
          player.didPlayerJoinEvent = true;
          // Paper end
@@ -36,7 +36,7 @@ index fecd65dc87a99a5692c59dd590b20327b1eb31c2..815f29045d3d555a7483d3794a2d1c00
          Component joinMessage = ichatmutablecomponent; // Paper - Adventure
  
          playerconnection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
-@@ -619,6 +626,16 @@ public abstract class PlayerList {
+@@ -620,6 +627,16 @@ public abstract class PlayerList {
              entityplayer.closeContainer(org.bukkit.event.inventory.InventoryCloseEvent.Reason.DISCONNECT); // Paper
          }
  

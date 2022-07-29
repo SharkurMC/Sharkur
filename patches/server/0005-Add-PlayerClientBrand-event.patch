@@ -5,10 +5,10 @@ Subject: [PATCH] Add PlayerClientBrand event
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 7f2dc4f85154a27e547aa1860eca1c0bfbb3e6ee..1f07a8838aaee2511a8203cebf83018b3c945229 100644
+index 322bb76994dc3bf3eb21ac6c41c6d744743c766f..2fb2257ab3a7e2603b71ff11d097a68be3fc7a6f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -3534,6 +3534,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
+@@ -3745,6 +3745,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
                      } catch (StringIndexOutOfBoundsException ex) {
                          this.clientBrandName = "illegal";
                      }
